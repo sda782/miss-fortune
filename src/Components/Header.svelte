@@ -9,7 +9,7 @@
 <style>
     .box {
         border-color: #d7cfbe !important;
-        background-image: url("./mf_splash.png");
+        background-image: url("/mf_splash.png");
         background-size: cover;
         background-position: center 30%;
     }
