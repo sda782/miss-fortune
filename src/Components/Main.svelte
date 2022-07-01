@@ -45,7 +45,7 @@
                             width="32"
                             height="33"
                             class="overlay"
-                            src="/lock.png"
+                            src="./lock.png"
                             alt=""
                         />
                     {/if}
