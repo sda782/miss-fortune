@@ -10,5 +10,9 @@ export interface champion {
         w: number,
         h: number
     },
-    chestState: boolean
+}
+
+export interface championState {
+    name: string,
+    chestState: string
 }

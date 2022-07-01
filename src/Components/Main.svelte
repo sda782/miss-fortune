@@ -1,27 +1,46 @@
 <script lang="ts">
     import { onMount } from "svelte";
+    import type { champion, championState } from "../Models/champion.js";
     import { getChampions, getLastestVersion } from "../Services/Api.js";
-    let champions;
+    import { cheststates } from "../Services/store.js";
+    let champions: champion[];
     let ver;
     onMount(async () => {
         ver = await getLastestVersion();
         champions = await getChampions(ver);
-        console.log(champions);
+        if ($cheststates.length === 0) {
+            champions.forEach((val) => {
+                let temp: championState = {
+                    name: val.id,
+                    chestState: "locked",
+                };
+                $cheststates = [...$cheststates, temp];
+            });
+        }
+        console.log($cheststates);
     });
-    const toggleChest = (champion): void => {};
+    const toggleChest = (champion): void => {
+        let champ = $cheststates.find((el) => el.name == champion);
+        console.log(champ);
+        champ.chestState =
+            champ.chestState === "locked" ? "unlocked" : "locked";
+        $cheststates = [...$cheststates];
+    };
 </script>
 
-<div class="d-flex flex-wrap">
+<div class="d-flex flex-wrap container">
     {#if champions !== undefined}
-        {#each Object.keys(champions) as champion}
-            <div style="max-width: 120px;" class="m-3">
+        {#each champions as champion}
+            <div style="max-width: 120px;" class="mt-3 ms-2 ">
                 <img
-                    on:click={() => toggleChest(champion)}
-                    src="http://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion}.png"
-                    alt={champion}
+                    on:click={() => toggleChest(champion.id)}
+                    src="http://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion.id}.png"
+                    alt={champion.name}
                 />
                 <div style="position:absolute;">
-                    {#if true}
+                    {#if $cheststates.find((el) => el.name == champion.id).chestState == "locked"}
+                        <div />
+                    {:else}
                         <img
                             width="32"
                             height="33"
@@ -29,11 +48,9 @@
                             src="/lock.png"
                             alt=""
                         />
-                    {:else}
-                        <div />
                     {/if}
                 </div>
-                <h4 class="text-center">{champion}</h4>
+                <h5 class="text-center mt-2">{champion.name}</h5>
             </div>
         {/each}
     {/if}

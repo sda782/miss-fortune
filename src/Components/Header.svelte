@@ -1,20 +1,20 @@
-<div class="border-bottom border-5 border-color d-flex h-bg">
-    <h1 class="ps-5 pe-5 pt-2 pb-2 rounded-3">
-        <em>Fortune doesn't favor fools.</em>
-    </h1>
+<div class="border-bottom border-5 box d-flex">
+    <div class="container">
+        <h1 class="pt-3 pb-1 rounded-3 w-50 text-center">
+            <em>Fortune doesn't favor fools.</em>
+        </h1>
+    </div>
 </div>
 
 <style>
-    .border-color {
+    .box {
         border-color: #d7cfbe !important;
-    }
-    h1 {
-        margin: 1em;
-        background-color: #07141d;
-    }
-    .h-bg {
         background-image: url("/mf_splash.png");
         background-size: cover;
         background-position: center 30%;
+    }
+    h1 {
+        margin: 1em 0 1em 0;
+        background-color: #07141d;
     }
 </style>
