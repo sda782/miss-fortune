@@ -34,7 +34,7 @@
             <div style="max-width: 120px;" class="mt-3 ms-2 ">
                 <img
                     on:click={() => toggleChest(champion.id)}
-                    src="http://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion.id}.png"
+                    src="https://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion.id}.png"
                     alt={champion.name}
                 />
                 <div style="position:absolute;">
