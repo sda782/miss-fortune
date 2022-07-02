@@ -35,25 +35,6 @@ var app = (function () {
     function is_empty(obj) {
         return Object.keys(obj).length === 0;
     }
-    function validate_store(store, name) {
-        if (store != null && typeof store.subscribe !== 'function') {
-            throw new Error(`'${name}' is not a store with a 'subscribe' method`);
-        }
-    }
-    function subscribe(store, ...callbacks) {
-        if (store == null) {
-            return noop;
-        }
-        const unsub = store.subscribe(...callbacks);
-        return unsub.unsubscribe ? () => unsub.unsubscribe() : unsub;
-    }
-    function component_subscribe(component, store, callback) {
-        component.$$.on_destroy.push(subscribe(store, callback));
-    }
-    function set_store_value(store, ret, value) {
-        store.set(value);
-        return ret;
-    }
     function append(target, node) {
         target.appendChild(node);
     }
@@ -93,6 +74,9 @@ var app = (function () {
     }
     function children(element) {
         return Array.from(element.childNodes);
+    }
+    function set_input_value(input, value) {
+        input.value = value == null ? '' : value;
     }
     function set_style(node, key, value, important) {
         if (value === null) {
@@ -443,7 +427,7 @@ var app = (function () {
 
     const file$1 = "src\\Components\\Header.svelte";
 
-    function create_fragment$2(ctx) {
+    function create_fragment$3(ctx) {
     	let div1;
     	let div0;
     	let h1;
@@ -483,7 +467,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_fragment$2.name,
+    		id: create_fragment$3.name,
     		type: "component",
     		source: "",
     		ctx
@@ -492,7 +476,7 @@ var app = (function () {
     	return block;
     }
 
-    function instance$2($$self, $$props) {
+    function instance$3($$self, $$props) {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Header', slots, []);
     	const writable_props = [];
@@ -507,13 +491,13 @@ var app = (function () {
     class Header extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {});
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
     			tagName: "Header",
     			options,
-    			id: create_fragment$2.name
+    			id: create_fragment$3.name
     		});
     	}
     }
@@ -2534,6 +2518,8 @@ var app = (function () {
 
     var axios = axios_1;
 
+    const dev_key = "RGAPI-b2fb2f05-01cb-4143-bb59-ed12f6b9dc71";
+    const rgapi_header = { headers: { 'X-Riot-token': dev_key } };
     const getLastestVersion = async () => {
         const res = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json');
         return res.data[0];
@@ -2546,82 +2532,28 @@ var app = (function () {
         });
         return data;
     };
-
-    const subscriber_queue = [];
-    /**
-     * Create a `Writable` store that allows both updating and reading by subscription.
-     * @param {*=}value initial value
-     * @param {StartStopNotifier=}start start and stop notifications for subscriptions
-     */
-    function writable(value, start = noop) {
-        let stop;
-        const subscribers = new Set();
-        function set(new_value) {
-            if (safe_not_equal(value, new_value)) {
-                value = new_value;
-                if (stop) { // store is ready
-                    const run_queue = !subscriber_queue.length;
-                    for (const subscriber of subscribers) {
-                        subscriber[1]();
-                        subscriber_queue.push(subscriber, value);
-                    }
-                    if (run_queue) {
-                        for (let i = 0; i < subscriber_queue.length; i += 2) {
-                            subscriber_queue[i][0](subscriber_queue[i + 1]);
-                        }
-                        subscriber_queue.length = 0;
-                    }
-                }
-            }
-        }
-        function update(fn) {
-            set(fn(value));
-        }
-        function subscribe(run, invalidate = noop) {
-            const subscriber = [run, invalidate];
-            subscribers.add(subscriber);
-            if (subscribers.size === 1) {
-                stop = start(set) || noop;
-            }
-            run(value);
-            return () => {
-                subscribers.delete(subscriber);
-                if (subscribers.size === 0) {
-                    stop();
-                    stop = null;
-                }
-            };
-        }
-        return { set, update, subscribe };
-    }
-
-    const writeToStorage = (key, val) => {
-        localStorage.setItem(key, JSON.stringify(val));
+    const getAccountIdsByName = async (username) => {
+        const res = await axios.get(`https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${username}`, rgapi_header);
+        return res.data;
     };
-    const readFromStorage = key => {
-        let data = JSON.parse(localStorage.getItem(key));
-        console.log(data);
-        return data === null ? [] : data;
+    const getChampionsMastery = async (encryptedSummonerId) => {
+        const res = await axios.get(`https://euw1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/${encryptedSummonerId}`, rgapi_header);
+        return res.data;
     };
 
-    const cheststatesInit = readFromStorage('lolstate');
-    const cheststates = writable(cheststatesInit);
-    cheststates.subscribe(val => {
-        writeToStorage('lolstate', val);
-    });
-
-    /* src\Components\Main.svelte generated by Svelte v3.48.0 */
+    /* src\Components\Auto.svelte generated by Svelte v3.48.0 */
 
     const { console: console_1 } = globals;
-    const file = "src\\Components\\Main.svelte";
+
+    const file = "src\\Components\\Auto.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[6] = list[i];
+    	child_ctx[7] = list[i];
     	return child_ctx;
     }
 
-    // (30:4) {#if champions !== undefined}
+    // (29:8) {#if champions !== undefined}
     function create_if_block(ctx) {
     	let each_1_anchor;
     	let each_value = /*champions*/ ctx[0];
@@ -2648,7 +2580,7 @@ var app = (function () {
     			insert_dev(target, each_1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*champions, $cheststates, ver, toggleChest*/ 15) {
+    			if (dirty & /*champions, champMastery, username, undefined, ver*/ 15) {
     				each_value = /*champions*/ ctx[0];
     				validate_each_argument(each_value);
     				let i;
@@ -2682,15 +2614,101 @@ var app = (function () {
     		block,
     		id: create_if_block.name,
     		type: "if",
-    		source: "(30:4) {#if champions !== undefined}",
+    		source: "(29:8) {#if champions !== undefined}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (41:20) {:else}
+    // (37:24) {#if champMastery !== undefined}
+    function create_if_block_1(ctx) {
+    	let show_if;
+    	let if_block_anchor;
+
+    	function func(...args) {
+    		return /*func*/ ctx[5](/*champion*/ ctx[7], ...args);
+    	}
+
+    	function select_block_type(ctx, dirty) {
+    		if (dirty & /*champMastery, champions, username*/ 13) show_if = null;
+    		if (show_if == null) show_if = !!(/*champMastery*/ ctx[3].find(func) && /*username*/ ctx[2] != "");
+    		if (show_if) return create_if_block_2;
+    		return create_else_block;
+    	}
+
+    	let current_block_type = select_block_type(ctx, -1);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(new_ctx, dirty) {
+    			ctx = new_ctx;
+
+    			if (current_block_type !== (current_block_type = select_block_type(ctx, dirty))) {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1.name,
+    		type: "if",
+    		source: "(37:24) {#if champMastery !== undefined}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (46:28) {:else}
     function create_else_block(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			add_location(div, file, 46, 32, 1869);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block.name,
+    		type: "else",
+    		source: "(46:28) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (38:28) {#if champMastery.find((champ) => champ.championId.toString() == champion.key) && username != ""}
+    function create_if_block_2(ctx) {
     	let img;
     	let img_src_value;
 
@@ -2702,7 +2720,7 @@ var app = (function () {
     			attr_dev(img, "class", "overlay svelte-1sdfmbe");
     			if (!src_url_equal(img.src, img_src_value = "/lock.png")) attr_dev(img, "src", img_src_value);
     			attr_dev(img, "alt", "");
-    			add_location(img, file, 41, 24, 1541);
+    			add_location(img, file, 38, 32, 1511);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, img, anchor);
@@ -2714,44 +2732,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block.name,
-    		type: "else",
-    		source: "(41:20) {:else}",
-    		ctx
-    	});
-
-    	return block;
-    }
-
-    // (39:20) {#if $cheststates.find((el) => el.name == champion.id).chestState == "locked"}
-    function create_if_block_1(ctx) {
-    	let div;
-
-    	const block = {
-    		c: function create() {
-    			div = element("div");
-    			add_location(div, file, 39, 24, 1479);
-    		},
-    		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    		},
-    		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    		}
-    	};
-
-    	dispatch_dev("SvelteRegisterBlock", {
-    		block,
-    		id: create_if_block_1.name,
+    		id: create_if_block_2.name,
     		type: "if",
-    		source: "(39:20) {#if $cheststates.find((el) => el.name == champion.id).chestState == \\\"locked\\\"}",
+    		source: "(38:28) {#if champMastery.find((champ) => champ.championId.toString() == champion.key) && username != \\\"\\\"}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (31:8) {#each champions as champion}
+    // (30:12) {#each champions as champion}
     function create_each_block(ctx) {
     	let div1;
     	let img;
@@ -2759,32 +2749,12 @@ var app = (function () {
     	let img_alt_value;
     	let t0;
     	let div0;
-    	let show_if;
     	let t1;
     	let h5;
-    	let t2_value = /*champion*/ ctx[6].name + "";
+    	let t2_value = /*champion*/ ctx[7].name + "";
     	let t2;
     	let t3;
-    	let mounted;
-    	let dispose;
-
-    	function func(...args) {
-    		return /*func*/ ctx[4](/*champion*/ ctx[6], ...args);
-    	}
-
-    	function click_handler() {
-    		return /*click_handler*/ ctx[5](/*champion*/ ctx[6]);
-    	}
-
-    	function select_block_type(ctx, dirty) {
-    		if (dirty & /*$cheststates, champions*/ 5) show_if = null;
-    		if (show_if == null) show_if = !!(/*$cheststates*/ ctx[2].find(func).chestState == "locked");
-    		if (show_if) return create_if_block_1;
-    		return create_else_block;
-    	}
-
-    	let current_block_type = select_block_type(ctx, -1);
-    	let if_block = current_block_type(ctx);
+    	let if_block = /*champMastery*/ ctx[3] !== undefined && create_if_block_1(ctx);
 
     	const block = {
     		c: function create() {
@@ -2792,66 +2762,60 @@ var app = (function () {
     			img = element("img");
     			t0 = space();
     			div0 = element("div");
-    			if_block.c();
+    			if (if_block) if_block.c();
     			t1 = space();
     			h5 = element("h5");
     			t2 = text(t2_value);
     			t3 = space();
-    			if (!src_url_equal(img.src, img_src_value = "https://ddragon.leagueoflegends.com/cdn/" + /*ver*/ ctx[1] + "/img/champion/" + /*champion*/ ctx[6].id + ".png")) attr_dev(img, "src", img_src_value);
-    			attr_dev(img, "alt", img_alt_value = /*champion*/ ctx[6].name);
-    			add_location(img, file, 32, 16, 1071);
+    			if (!src_url_equal(img.src, img_src_value = "https://ddragon.leagueoflegends.com/cdn/" + /*ver*/ ctx[1] + "/img/champion/" + /*champion*/ ctx[7].id + ".png")) attr_dev(img, "src", img_src_value);
+    			attr_dev(img, "alt", img_alt_value = /*champion*/ ctx[7].name);
+    			add_location(img, file, 31, 20, 1057);
     			set_style(div0, "position", "absolute");
-    			add_location(div0, file, 37, 16, 1321);
+    			add_location(div0, file, 35, 20, 1260);
     			attr_dev(h5, "class", "text-center mt-2");
-    			add_location(h5, file, 50, 16, 1849);
+    			add_location(h5, file, 50, 20, 1992);
     			set_style(div1, "max-width", "120px");
     			attr_dev(div1, "class", "mt-3 ms-2 ");
-    			add_location(div1, file, 31, 12, 1003);
+    			add_location(div1, file, 30, 16, 985);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
     			append_dev(div1, img);
     			append_dev(div1, t0);
     			append_dev(div1, div0);
-    			if_block.m(div0, null);
+    			if (if_block) if_block.m(div0, null);
     			append_dev(div1, t1);
     			append_dev(div1, h5);
     			append_dev(h5, t2);
     			append_dev(div1, t3);
-
-    			if (!mounted) {
-    				dispose = listen_dev(img, "click", click_handler, false, false, false);
-    				mounted = true;
-    			}
     		},
-    		p: function update(new_ctx, dirty) {
-    			ctx = new_ctx;
-
-    			if (dirty & /*ver, champions*/ 3 && !src_url_equal(img.src, img_src_value = "https://ddragon.leagueoflegends.com/cdn/" + /*ver*/ ctx[1] + "/img/champion/" + /*champion*/ ctx[6].id + ".png")) {
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*ver, champions*/ 3 && !src_url_equal(img.src, img_src_value = "https://ddragon.leagueoflegends.com/cdn/" + /*ver*/ ctx[1] + "/img/champion/" + /*champion*/ ctx[7].id + ".png")) {
     				attr_dev(img, "src", img_src_value);
     			}
 
-    			if (dirty & /*champions*/ 1 && img_alt_value !== (img_alt_value = /*champion*/ ctx[6].name)) {
+    			if (dirty & /*champions*/ 1 && img_alt_value !== (img_alt_value = /*champion*/ ctx[7].name)) {
     				attr_dev(img, "alt", img_alt_value);
     			}
 
-    			if (current_block_type !== (current_block_type = select_block_type(ctx, dirty))) {
-    				if_block.d(1);
-    				if_block = current_block_type(ctx);
-
+    			if (/*champMastery*/ ctx[3] !== undefined) {
     				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block_1(ctx);
     					if_block.c();
     					if_block.m(div0, null);
     				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
     			}
 
-    			if (dirty & /*champions*/ 1 && t2_value !== (t2_value = /*champion*/ ctx[6].name + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*champions*/ 1 && t2_value !== (t2_value = /*champion*/ ctx[7].name + "")) set_data_dev(t2, t2_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div1);
-    			if_block.d();
-    			mounted = false;
-    			dispose();
+    			if (if_block) if_block.d();
     		}
     	};
 
@@ -2859,39 +2823,84 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(31:8) {#each champions as champion}",
+    		source: "(30:12) {#each champions as champion}",
     		ctx
     	});
 
     	return block;
     }
 
-    function create_fragment$1(ctx) {
-    	let div;
+    function create_fragment$2(ctx) {
+    	let div2;
+    	let div0;
+    	let input;
+    	let t0;
+    	let button;
+    	let t2;
+    	let div1;
+    	let mounted;
+    	let dispose;
     	let if_block = /*champions*/ ctx[0] !== undefined && create_if_block(ctx);
 
     	const block = {
     		c: function create() {
-    			div = element("div");
+    			div2 = element("div");
+    			div0 = element("div");
+    			input = element("input");
+    			t0 = space();
+    			button = element("button");
+    			button.textContent = "Find";
+    			t2 = space();
+    			div1 = element("div");
     			if (if_block) if_block.c();
-    			attr_dev(div, "class", "d-flex flex-wrap container");
-    			add_location(div, file, 28, 0, 875);
+    			attr_dev(input, "placeholder", "Summoner Name");
+    			attr_dev(input, "type", "text");
+    			attr_dev(input, "class", "form-control-sm");
+    			add_location(input, file, 19, 8, 606);
+    			attr_dev(button, "class", "btn btn-secondary");
+    			add_location(button, file, 25, 8, 772);
+    			attr_dev(div0, "class", "d-flex w-25");
+    			add_location(div0, file, 18, 4, 571);
+    			attr_dev(div1, "class", "d-flex flex-wrap");
+    			add_location(div1, file, 27, 4, 855);
+    			attr_dev(div2, "class", "container mt-3");
+    			add_location(div2, file, 17, 0, 537);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			if (if_block) if_block.m(div, null);
+    			insert_dev(target, div2, anchor);
+    			append_dev(div2, div0);
+    			append_dev(div0, input);
+    			set_input_value(input, /*username*/ ctx[2]);
+    			append_dev(div0, t0);
+    			append_dev(div0, button);
+    			append_dev(div2, t2);
+    			append_dev(div2, div1);
+    			if (if_block) if_block.m(div1, null);
+
+    			if (!mounted) {
+    				dispose = [
+    					listen_dev(input, "input", /*input_input_handler*/ ctx[6]),
+    					listen_dev(button, "click", /*search*/ ctx[4], false, false, false)
+    				];
+
+    				mounted = true;
+    			}
     		},
     		p: function update(ctx, [dirty]) {
+    			if (dirty & /*username*/ 4 && input.value !== /*username*/ ctx[2]) {
+    				set_input_value(input, /*username*/ ctx[2]);
+    			}
+
     			if (/*champions*/ ctx[0] !== undefined) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
     					if_block = create_if_block(ctx);
     					if_block.c();
-    					if_block.m(div, null);
+    					if_block.m(div1, null);
     				}
     			} else if (if_block) {
     				if_block.d(1);
@@ -2901,8 +2910,127 @@ var app = (function () {
     		i: noop,
     		o: noop,
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
+    			if (detaching) detach_dev(div2);
     			if (if_block) if_block.d();
+    			mounted = false;
+    			run_all(dispose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_fragment$2.name,
+    		type: "component",
+    		source: "",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function instance$2($$self, $$props, $$invalidate) {
+    	let { $$slots: slots = {}, $$scope } = $$props;
+    	validate_slots('Auto', slots, []);
+    	let champions;
+    	let ver;
+    	let username = "";
+    	let champMastery = undefined;
+
+    	onMount(async () => {
+    		$$invalidate(1, ver = await getLastestVersion());
+    		$$invalidate(0, champions = await getChampions(ver));
+    		console.log(champions);
+    	});
+
+    	const search = async () => {
+    		const ids = await getAccountIdsByName(username);
+    		$$invalidate(3, champMastery = await getChampionsMastery(ids.id));
+    	};
+
+    	const writable_props = [];
+
+    	Object.keys($$props).forEach(key => {
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<Auto> was created with unknown prop '${key}'`);
+    	});
+
+    	const func = (champion, champ) => champ.championId.toString() == champion.key;
+
+    	function input_input_handler() {
+    		username = this.value;
+    		$$invalidate(2, username);
+    	}
+
+    	$$self.$capture_state = () => ({
+    		onMount,
+    		getAccountIdsByName,
+    		getChampions,
+    		getChampionsMastery,
+    		getLastestVersion,
+    		champions,
+    		ver,
+    		username,
+    		champMastery,
+    		search
+    	});
+
+    	$$self.$inject_state = $$props => {
+    		if ('champions' in $$props) $$invalidate(0, champions = $$props.champions);
+    		if ('ver' in $$props) $$invalidate(1, ver = $$props.ver);
+    		if ('username' in $$props) $$invalidate(2, username = $$props.username);
+    		if ('champMastery' in $$props) $$invalidate(3, champMastery = $$props.champMastery);
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [champions, ver, username, champMastery, search, func, input_input_handler];
+    }
+
+    class Auto extends SvelteComponentDev {
+    	constructor(options) {
+    		super(options);
+    		init(this, options, instance$2, create_fragment$2, safe_not_equal, {});
+
+    		dispatch_dev("SvelteRegisterComponent", {
+    			component: this,
+    			tagName: "Auto",
+    			options,
+    			id: create_fragment$2.name
+    		});
+    	}
+    }
+
+    /* src\Components\Main.svelte generated by Svelte v3.48.0 */
+
+    function create_fragment$1(ctx) {
+    	let auto;
+    	let current;
+    	auto = new Auto({ $$inline: true });
+
+    	const block = {
+    		c: function create() {
+    			create_component(auto.$$.fragment);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			mount_component(auto, target, anchor);
+    			current = true;
+    		},
+    		p: noop,
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(auto.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(auto.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			destroy_component(auto, detaching);
     		}
     	};
 
@@ -2918,65 +3046,16 @@ var app = (function () {
     }
 
     function instance$1($$self, $$props, $$invalidate) {
-    	let $cheststates;
-    	validate_store(cheststates, 'cheststates');
-    	component_subscribe($$self, cheststates, $$value => $$invalidate(2, $cheststates = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots('Main', slots, []);
-    	let champions;
-    	let ver;
-
-    	onMount(async () => {
-    		$$invalidate(1, ver = await getLastestVersion());
-    		$$invalidate(0, champions = await getChampions(ver));
-
-    		if ($cheststates.length === 0) {
-    			champions.forEach(val => {
-    				let temp = { name: val.id, chestState: "locked" };
-    				set_store_value(cheststates, $cheststates = [...$cheststates, temp], $cheststates);
-    			});
-    		}
-
-    		console.log($cheststates);
-    	});
-
-    	const toggleChest = champion => {
-    		let champ = $cheststates.find(el => el.name == champion);
-    		console.log(champ);
-    		champ.chestState = champ.chestState === "locked" ? "unlocked" : "locked";
-    		set_store_value(cheststates, $cheststates = [...$cheststates], $cheststates);
-    	};
-
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console_1.warn(`<Main> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== '$$' && key !== 'slot') console.warn(`<Main> was created with unknown prop '${key}'`);
     	});
 
-    	const func = (champion, el) => el.name == champion.id;
-    	const click_handler = champion => toggleChest(champion.id);
-
-    	$$self.$capture_state = () => ({
-    		onMount,
-    		getChampions,
-    		getLastestVersion,
-    		cheststates,
-    		champions,
-    		ver,
-    		toggleChest,
-    		$cheststates
-    	});
-
-    	$$self.$inject_state = $$props => {
-    		if ('champions' in $$props) $$invalidate(0, champions = $$props.champions);
-    		if ('ver' in $$props) $$invalidate(1, ver = $$props.ver);
-    	};
-
-    	if ($$props && "$$inject" in $$props) {
-    		$$self.$inject_state($$props.$$inject);
-    	}
-
-    	return [champions, ver, $cheststates, toggleChest, func, click_handler];
+    	$$self.$capture_state = () => ({ Auto });
+    	return [];
     }
 
     class Main extends SvelteComponentDev {
