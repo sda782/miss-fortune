@@ -14,11 +14,17 @@
     onMount(async () => {
         ver = await getLastestVersion();
         champions = await getChampions(ver);
-        console.log(champions);
     });
     const search = async (): Promise<void> => {
         const ids = await getAccountIdsByName(username);
         champMastery = await getChampionsMastery(ids.id);
+    };
+    const hasChest = (champion): boolean => {
+        let champ = champMastery.find(
+            (champ) => champ.championId.toString() == champion.key
+        );
+        if (champ === undefined) return false;
+        return champ.chestGranted;
     };
 </script>
 
@@ -42,7 +48,7 @@
                     />
                     <div style="position:absolute;">
                         {#if champMastery !== undefined}
-                            {#if champMastery.find((champ) => champ.championId.toString() == champion.key) && username != ""}
+                            {#if hasChest(champion) && username != ""}
                                 <img
                                     width="32"
                                     height="33"
