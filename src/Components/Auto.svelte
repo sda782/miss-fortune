@@ -14,10 +14,16 @@
     onMount(async () => {
         ver = await getLastestVersion();
         champions = await getChampions(ver);
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("name")) {
+            username = urlParams.get("name");
+            search();
+        }
     });
     const search = async (): Promise<void> => {
         const ids = await getAccountIdsByName(username);
         champMastery = await getChampionsMastery(ids.id);
+        champions = [...champions];
     };
     const hasChest = (champion): boolean => {
         let champ = champMastery.find(
@@ -33,10 +39,15 @@
         <input
             placeholder="Summoner Name"
             type="text"
-            class="form-control-sm"
+            class="form-control-sm text-center me-2"
+            style="max-height:2em; background:#d7cfbe;"
             bind:value={username}
         />
-        <button class="btn btn-secondary" on:click={search}>Find</button>
+        <button
+            class="btn btn-secondary-outline"
+            style="max-height: 2em; color:#d7cfbe;"
+            on:click={search}>Find</button
+        >
     </div>
     <div class="d-flex flex-wrap">
         {#if champions !== undefined}
@@ -48,7 +59,7 @@
                     />
                     <div style="position:absolute;">
                         {#if champMastery !== undefined}
-                            {#if hasChest(champion) && username != ""}
+                            {#if hasChest(champion)}
                                 <img
                                     width="32"
                                     height="33"
