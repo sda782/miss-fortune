@@ -2518,8 +2518,6 @@ var app = (function () {
 
     var axios = axios_1;
 
-    const dev_key = "RGAPI-b2fb2f05-01cb-4143-bb59-ed12f6b9dc71";
-    const rgapi_header = { headers: { 'X-Riot-token': dev_key } };
     const getLastestVersion = async () => {
         const res = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json');
         return res.data[0];
@@ -2533,11 +2531,11 @@ var app = (function () {
         return data;
     };
     const getAccountIdsByName = async (username) => {
-        const res = await axios.get(`https://euw1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${username}`, rgapi_header);
+        const res = await axios.get(`https://riot-api-proxy.vercel.app/riotapi/summoner/v4/summoners/by-name/${username}`);
         return res.data;
     };
     const getChampionsMastery = async (encryptedSummonerId) => {
-        const res = await axios.get(`https://euw1.api.riotgames.com/lol/champion-mastery/v4/champion-masteries/by-summoner/${encryptedSummonerId}`, rgapi_header);
+        const res = await axios.get(`https://riot-api-proxy.vercel.app/riotapi/champion-mastery/v4/champion-masteries/by-summoner/${encryptedSummonerId}`);
         return res.data;
     };
 
