@@ -12,11 +12,6 @@ export interface champion {
     },
 }
 
-export interface championState {
-    name: string,
-    chestState: string
-}
-
 export interface championMastery {
     championId: number,
     championLevel: number,
