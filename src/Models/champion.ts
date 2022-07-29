@@ -10,6 +10,7 @@ export interface champion {
         w: number,
         h: number
     },
+    display: boolean
 }
 
 export interface championMastery {

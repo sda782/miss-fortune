@@ -12,6 +12,13 @@ export const getChampions = async (version: string): Promise<champion[]> => {
         let championData = res.data.data[i]
         return championData
     });
+    data.forEach((c: champion) => c.display = true)
+    data.sort((a, b) => {
+        const nameA = a.name.toUpperCase();
+        const nameB = b.name.toUpperCase();
+        if (nameA < nameB) return -1;
+        if (nameA > nameB) return 1;
+    })
     return data;
 }
 

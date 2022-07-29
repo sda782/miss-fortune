@@ -8,16 +8,15 @@
         getLastestVersion,
     } from "../Services/Api.js";
     let champions: champion[];
-    let championDisplay: champion[];
     let ver: string;
     let username = "";
     let targetChampionName: string;
     let champMastery: championMastery[] = undefined;
+    let lastGroupLetter: string = "";
 
     onMount(async () => {
         ver = await getLastestVersion();
         champions = await getChampions(ver);
-        championDisplay = champions;
         const urlParams = new URLSearchParams(window.location.search);
         if (urlParams.has("name")) {
             username = urlParams.get("name");
@@ -32,14 +31,16 @@
     };
 
     const searchChampion = (): void => {
-        championDisplay = champions.filter((champ) => {
+        champions.forEach((champ: champion) => {
             if (
                 champ.name
                     .toLowerCase()
                     .startsWith(targetChampionName.toLowerCase())
             )
-                return champ;
+                champ.display = true;
+            else champ.display = false;
         });
+        champions = [...champions];
     };
 
     const hasChest = (champion: champion): boolean => {
@@ -49,11 +50,25 @@
         if (champ === undefined) return false;
         return champ.chestGranted;
     };
+    const getMasterylvl = (champion: champion): string => {
+        let champ = champMastery.find(
+            (champ) => champ.championId.toString() == champion.key
+        );
+        if (champ === undefined) return "";
+        return champ.championLevel.toString();
+    };
+    const showLetter = (name: string): boolean => {
+        if (lastGroupLetter.toLowerCase() !== name.toLowerCase()[0]) {
+            lastGroupLetter = name.toLowerCase()[0];
+            return true;
+        }
+        return false;
+    };
 </script>
 
 <div class="container mt-3">
     <div class="d-flex">
-        <div class="d-flex w-25">
+        <div class="d-flex">
             <input
                 placeholder="Summoner Name"
                 type="text"
@@ -62,12 +77,12 @@
                 bind:value={username}
             />
             <button
-                class="btn btn-secondary-outline"
+                class="btn btn-secondary-outline me-2"
                 style="max-height: 2em; color:#d7cfbe;"
                 on:click={searchUser}>Find user</button
             >
         </div>
-        <div class="d-flex w-25">
+        <div class="d-flex">
             <input
                 placeholder="Champion Name"
                 type="text"
@@ -79,30 +94,43 @@
         </div>
     </div>
     <div class="d-flex flex-wrap">
-        {#if championDisplay !== undefined}
-            {#each championDisplay as champion}
-                <div style="max-width: 120px;" class="mt-3 ms-2 ">
-                    <img
-                        src="https://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion.id}.png"
-                        alt={champion.name}
-                    />
-                    <div style="position:absolute;">
+        {#if champions !== undefined}
+            {#each champions as champion}
+                {#if champion.display}
+                    {#if showLetter(champion.name)}
+                        <div
+                            style="min-width:100%;"
+                            class="mt-3 ms-2 ps-2 text-left fs-3"
+                        >
+                            <span>{champion.name[0]}</span>
+                        </div>
+                    {/if}
+                    <div style="max-width: 120px;" class="mt-3 ms-2 ">
+                        <img
+                            src="https://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion.id}.png"
+                            alt={champion.name}
+                        />
                         {#if champMastery !== undefined}
                             {#if hasChest(champion)}
-                                <img
-                                    width="43"
-                                    height="44"
-                                    class="overlay"
-                                    src="/lock.png"
-                                    alt=""
-                                />
-                            {:else}
-                                <div />
+                                <div style="position:absolute;">
+                                    <img
+                                        width="43"
+                                        height="44"
+                                        class="overlay"
+                                        src="/lock.png"
+                                        alt=""
+                                    />
+                                </div>
                             {/if}
+                            <div style="position:absolute;">
+                                <p class="mastery-lvl">
+                                    {getMasterylvl(champion)}
+                                </p>
+                            </div>
                         {/if}
+                        <h5 class="text-center mt-2">{champion.name}</h5>
                     </div>
-                    <h5 class="text-center mt-2">{champion.name}</h5>
-                </div>
+                {/if}
             {/each}
         {/if}
     </div>
@@ -113,5 +141,10 @@
         position: relative;
         top: -125px;
         left: -5px;
+    }
+    .mastery-lvl {
+        position: relative;
+        top: -30px;
+        left: 100px;
     }
 </style>
