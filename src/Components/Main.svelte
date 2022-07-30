@@ -13,6 +13,7 @@
     let targetChampionName: string;
     let champMastery: championMastery[] = undefined;
     let lastGroupLetter: string = "";
+    let displayList: boolean = true;
 
     onMount(async () => {
         ver = await getLastestVersion();
@@ -50,7 +51,7 @@
         if (champ === undefined) return false;
         return champ.chestGranted;
     };
-    const getMasterylvl = (champion: champion): string => {
+    const getMasteryLvl = (champion: champion): string => {
         let champ = champMastery.find(
             (champ) => champ.championId.toString() == champion.key
         );
@@ -68,28 +69,42 @@
 
 <div class="container mt-3">
     <div class="d-flex">
-        <div class="d-flex">
-            <input
-                placeholder="Summoner Name"
-                type="text"
-                class="form-control-sm text-center me-2"
-                style="max-height:2em; background:#d7cfbe;"
-                bind:value={username}
-            />
-            <button
-                class="btn btn-secondary-outline me-2"
-                style="max-height: 2em; color:#d7cfbe;"
-                on:click={searchUser}>Find user</button
+        <input
+            placeholder="Summoner Name"
+            type="text"
+            class="form-control-sm text-center me-2"
+            style="max-height:2em; background:#d7cfbe;"
+            bind:value={username}
+        />
+        <button
+            class="btn btn-secondary-outline me-2"
+            style="max-height: 2em; color:#d7cfbe;"
+            on:click={searchUser}>Find user</button
+        >
+        <input
+            placeholder="Champion Name"
+            type="text"
+            class="form-control-sm text-center me-2"
+            style="max-height:2em; background:#d7cfbe;"
+            bind:value={targetChampionName}
+        />
+        <button
+            class="btn btn-secondary-outline me-2"
+            style="max-height: 2em; color:#d7cfbe;"
+            on:click={searchChampion}>Find champion</button
+        >
+
+        <div class="d-flex pt-2">
+            <label
+                class="form-check-label me-2"
+                style="color: #d7cfbe; border:none"
+                for="list">Show List View</label
             >
-        </div>
-        <div class="d-flex">
             <input
-                placeholder="Champion Name"
-                type="text"
-                class="form-control-sm text-center me-2"
-                style="max-height:2em; background:#d7cfbe;"
-                bind:value={targetChampionName}
-                on:change={searchChampion}
+                class="form-check-input"
+                type="checkbox"
+                id="list"
+                bind:checked={displayList}
             />
         </div>
     </div>
@@ -97,7 +112,7 @@
         {#if champions !== undefined}
             {#each champions as champion}
                 {#if champion.display}
-                    {#if showLetter(champion.name)}
+                    {#if showLetter(champion.name) && displayList}
                         <div
                             style="min-width:100%;"
                             class="mt-3 ms-2 ps-2 text-left fs-3"
@@ -123,9 +138,9 @@
                                 </div>
                             {/if}
                             <div style="position:absolute;">
-                                <p class="mastery-lvl">
-                                    {getMasterylvl(champion)}
-                                </p>
+                                <span class="mastery-lvl fs-2">
+                                    {getMasteryLvl(champion)}
+                                </span>
                             </div>
                         {/if}
                         <h5 class="text-center mt-2">{champion.name}</h5>
@@ -144,7 +159,7 @@
     }
     .mastery-lvl {
         position: relative;
-        top: -30px;
-        left: 100px;
+        top: -35px;
+        left: 95px;
     }
 </style>
