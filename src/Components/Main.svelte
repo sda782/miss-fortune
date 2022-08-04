@@ -7,21 +7,29 @@
         getChampionsMastery,
         getLastestVersion,
     } from "../Services/Api.js";
+    let urlParams: URLSearchParams;
     let champions: champion[];
     let ver: string;
     let username = "";
-    let targetChampionName: string;
+    let targetChampionName = "";
     let champMastery: championMastery[] = undefined;
     let lastGroupLetter: string = "";
-    let displayList: boolean = true;
+    let displayList: boolean = false;
 
     onMount(async () => {
         ver = await getLastestVersion();
         champions = await getChampions(ver);
-        const urlParams = new URLSearchParams(window.location.search);
+        urlParams = new URLSearchParams(window.location.search);
+        urlParams.forEach((param) => {
+            console.log(param);
+        });
         if (urlParams.has("name")) {
             username = urlParams.get("name");
             searchUser();
+        }
+        if (urlParams.has("champion")) {
+            targetChampionName = urlParams.get("champion");
+            searchChampion();
         }
     });
 
