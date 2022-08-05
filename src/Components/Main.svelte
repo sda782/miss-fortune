@@ -5,7 +5,7 @@
         getAccountIdsByName,
         getChampions,
         getChampionsMastery,
-        getLastestVersion,
+        getLatestVersion,
     } from "../Services/Api.js";
     let urlParams: URLSearchParams;
     let champions: champion[];
@@ -13,11 +13,11 @@
     let username = "";
     let targetChampionName = "";
     let champMastery: championMastery[] = undefined;
-    let lastGroupLetter: string = "";
-    let displayList: boolean = false;
+    let lastGroupLetter = "";
+    let displayList = false;
 
     onMount(async () => {
-        ver = await getLastestVersion();
+        ver = await getLatestVersion();
         champions = await getChampions(ver);
         urlParams = new URLSearchParams(window.location.search);
         urlParams.forEach((param) => {
@@ -25,7 +25,7 @@
         });
         if (urlParams.has("name")) {
             username = urlParams.get("name");
-            searchUser();
+            await searchUser();
         }
         if (urlParams.has("champion")) {
             targetChampionName = urlParams.get("champion");
@@ -41,13 +41,9 @@
 
     const searchChampion = (): void => {
         champions.forEach((champ: champion) => {
-            if (
-                champ.name
-                    .toLowerCase()
-                    .startsWith(targetChampionName.toLowerCase())
-            )
-                champ.display = true;
-            else champ.display = false;
+            champ.display = champ.name
+                .toLowerCase()
+                .startsWith(targetChampionName.toLowerCase());
         });
         champions = [...champions];
     };
@@ -116,6 +112,7 @@
             />
         </div>
     </div>
+    <!--suppress JSUnresolvedVariable -->
     <div class="d-flex flex-wrap">
         {#if champions !== undefined}
             {#each champions as champion}
@@ -136,6 +133,7 @@
                         {#if champMastery !== undefined}
                             {#if hasChest(champion)}
                                 <div style="position:absolute;">
+                                    <!--suppress CheckImageSize -->
                                     <img
                                         width="43"
                                         height="44"
