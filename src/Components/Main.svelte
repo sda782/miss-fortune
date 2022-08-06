@@ -1,151 +1,116 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-    import type { champion, championMastery } from "../Models/champion.js";
+    import {onMount} from "svelte";
+    import type {champion, championMastery} from "../Models/champion.js";
     import {
-        getAccountIdsByName,
-        getChampions,
-        getChampionsMastery,
-        getLatestVersion,
-    } from "../Services/Api.js";
+        searchChampion,
+        hasChest,
+        getMasteryLvl
+    } from "../Services/championManager";
+    import {searchUser} from "../Services/userManager";
+    import {showLetter} from "../Services/utils";
+    import {getChampions, getLatestVersion} from "../Services/Api";
+
     let urlParams: URLSearchParams;
     let champions: champion[];
-    let ver: string;
+    let champMastery: championMastery[] = undefined;
     let username = "";
     let targetChampionName = "";
-    let champMastery: championMastery[] = undefined;
-    let lastGroupLetter = "";
+    let ver: string
     let displayList = false;
 
     onMount(async () => {
         ver = await getLatestVersion();
         champions = await getChampions(ver);
-        urlParams = new URLSearchParams(window.location.search);
-        urlParams.forEach((param) => {
-            console.log(param);
-        });
-        if (urlParams.has("name")) {
-            username = urlParams.get("name");
-            await searchUser();
-        }
-        if (urlParams.has("champion")) {
-            targetChampionName = urlParams.get("champion");
-            searchChampion();
-        }
+        setUpParams()
     });
-
-    const searchUser = async (): Promise<void> => {
-        const ids = await getAccountIdsByName(username);
-        champMastery = await getChampionsMastery(ids.id);
-        champions = [...champions];
-    };
-
-    const searchChampion = (): void => {
-        champions.forEach((champ: champion) => {
-            champ.display = champ.name
-                .toLowerCase()
-                .startsWith(targetChampionName.toLowerCase());
-        });
-        champions = [...champions];
-    };
-
-    const hasChest = (champion: champion): boolean => {
-        let champ = champMastery.find(
-            (champ) => champ.championId.toString() == champion.key
-        );
-        if (champ === undefined) return false;
-        return champ.chestGranted;
-    };
-    const getMasteryLvl = (champion: champion): string => {
-        let champ = champMastery.find(
-            (champ) => champ.championId.toString() == champion.key
-        );
-        if (champ === undefined) return "";
-        return champ.championLevel.toString();
-    };
-    const showLetter = (name: string): boolean => {
-        if (lastGroupLetter.toLowerCase() !== name.toLowerCase()[0]) {
-            lastGroupLetter = name.toLowerCase()[0];
-            return true;
-        }
-        return false;
-    };
+    const setUpParams = () => {
+        urlParams = new URLSearchParams(window.location.search);
+        urlParams.forEach((val, key) => {
+            switch (key) {
+                case "name":
+                    searchUser(val).then(() => {
+                        champions = [...champions]
+                    });
+                    username = val
+                    break
+                case "champion":
+                    searchChampion(champions, val)
+                    targetChampionName = val
+                    break
+            }
+        })
+    }
 </script>
 
 <div class="container mt-3">
     <div class="d-flex">
         <input
-            placeholder="Summoner Name"
-            type="text"
-            class="form-control-sm text-center me-2"
-            style="max-height:2em; background:#d7cfbe;"
-            bind:value={username}
+                placeholder="Summoner Name"
+                type="text"
+                class="form-control-sm text-center me-2"
+                style="max-height:2em; background:rgb(215,207,190);"
+                bind:value={username}
         />
         <button
-            class="btn btn-secondary-outline me-2"
-            style="max-height: 2em; color:#d7cfbe;"
-            on:click={searchUser}>Find user</button
-        >
+                class="btn btn-secondary-outline me-2"
+                style="max-height: 2em; color:rgb(215,207,190);"
+                on:click={ async ()=>{
+                champMastery = await searchUser(username)
+                champions = [...champions];
+            }}>Find user
+        </button>
         <input
-            placeholder="Champion Name"
-            type="text"
-            class="form-control-sm text-center me-2"
-            style="max-height:2em; background:#d7cfbe;"
-            bind:value={targetChampionName}
+                placeholder="Champion Name"
+                type="text"
+                class="form-control-sm text-center me-2"
+                style="max-height:2em; background:rgb(215,207,190);"
+                bind:value={targetChampionName}
         />
         <button
-            class="btn btn-secondary-outline me-2"
-            style="max-height: 2em; color:#d7cfbe;"
-            on:click={searchChampion}>Find champion</button
+                class="btn btn-secondary-outline me-2"
+                style="max-height: 2em; color:rgb(215,207,190);"
+                on:click={()=>{
+                champions = searchChampion(champions, targetChampionName)
+            }}>Find champion
+        </button
         >
 
         <div class="d-flex pt-2">
             <label
-                class="form-check-label me-2"
-                style="color: #d7cfbe; border:none"
-                for="list">Show List View</label
+                    class="form-check-label me-2"
+                    style="color: rgb(215,207,190); border:none"
+                    for="list">Show List View</label
             >
             <input
-                class="form-check-input"
-                type="checkbox"
-                id="list"
-                bind:checked={displayList}
+                    class="form-check-input"
+                    type="checkbox"
+                    id="list"
+                    bind:checked={displayList}
             />
         </div>
     </div>
-    <!--suppress JSUnresolvedVariable -->
     <div class="d-flex flex-wrap">
         {#if champions !== undefined}
             {#each champions as champion}
                 {#if champion.display}
                     {#if showLetter(champion.name) && displayList}
-                        <div
-                            style="min-width:100%;"
-                            class="mt-3 ms-2 ps-2 text-left fs-3"
-                        >
+                        <div style="min-width:100%;" class="mt-3 ms-2 ps-2 text-left fs-3">
                             <span>{champion.name[0]}</span>
                         </div>
                     {/if}
                     <div style="max-width: 120px;" class="mt-3 ms-2 ">
-                        <img
-                            src="https://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion.id}.png"
-                            alt={champion.name}
+                        <img src="https://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion.id}.png"
+                             alt={champion.name}
                         />
                         {#if champMastery !== undefined}
-                            {#if hasChest(champion)}
+                            {#if hasChest(champion, champMastery)}
                                 <div style="position:absolute;">
-                                    <!--suppress CheckImageSize -->
-                                    <img
-                                        width="43"
-                                        height="44"
-                                        class="overlay"
-                                        src="/lock.png"
-                                        alt=""
-                                    />
+                                    <img width="43" height="45" class="overlay" src="/lock.png" alt=""/>
                                 </div>
                             {/if}
                             <div style="position:absolute;">
                                 <span class="mastery-lvl fs-2">
-                                    {getMasteryLvl(champion)}
+                                    {getMasteryLvl(champion, champMastery)}
                                 </span>
                             </div>
                         {/if}
@@ -163,6 +128,7 @@
         top: -125px;
         left: -5px;
     }
+
     .mastery-lvl {
         position: relative;
         top: -35px;
