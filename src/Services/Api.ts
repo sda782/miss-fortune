@@ -1,6 +1,7 @@
-import axios, { AxiosResponse } from "axios"
-import type { account } from "../Models/account"
-import type { champion, championMastery } from "../Models/champion"
+import axios, {AxiosResponse} from "axios"
+import type {account} from "../Models/account"
+import type {champion, championMastery} from "../Models/champion"
+import {arrangeChampion} from "./utils";
 
 export const getLatestVersion = async (): Promise<string> => {
     const res: AxiosResponse = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json')
@@ -8,17 +9,7 @@ export const getLatestVersion = async (): Promise<string> => {
 }
 export const getChampions = async (version: string): Promise<champion[]> => {
     const res: AxiosResponse = await axios.get(`https://ddragon.leagueoflegends.com/cdn/${version}/data/en_US/champion.json`)
-    let data: champion[] = Object.keys(res.data.data).map((i) => {
-        return res.data.data[i]
-    });
-    data.forEach((c: champion) => c.display = true)
-    data.sort((a, b) => {
-        const nameA = a.name.toUpperCase();
-        const nameB = b.name.toUpperCase();
-        if (nameA < nameB) return -1;
-        if (nameA > nameB) return 1;
-    })
-    return data;
+    return arrangeChampion(res);
 }
 
 export const getAccountIdsByName = async (username: string): Promise<account> => {
