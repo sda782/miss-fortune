@@ -1,11 +1,10 @@
 <script lang="ts">
-    import type {champion, championMastery} from "../Models/champion";
+    import type {champion} from "../Models/champion";
     import {showLetter} from "../Services/utils";
     import {getMasteryLvl, hasChest} from "../Services/championManager";
+    import {champMastery, ver} from "../Services/Store";
 
     export let champion: champion
-    export let ver: string
-    export let champMastery: championMastery[]
     export let displayList: boolean
 </script>
 
@@ -16,18 +15,18 @@
         </div>
     {/if}
     <div style="max-width: 120px;" class="mt-3 ms-2 ">
-        <img src="https://ddragon.leagueoflegends.com/cdn/{ver}/img/champion/{champion.id}.png"
+        <img src="https://ddragon.leagueoflegends.com/cdn/{$ver}/img/champion/{champion.id}.png"
              alt={champion.name}
         />
-        {#if champMastery !== undefined}
-            {#if hasChest(champion, champMastery)}
+        {#if $champMastery !== undefined}
+            {#if hasChest(champion, $champMastery)}
                 <div style="position:absolute;">
                     <img width="43" height="45" class="overlay" src="/lock.png" alt=""/>
                 </div>
             {/if}
             <div style="position:absolute;">
                 <span class="mastery-lvl fs-2">
-                    {getMasteryLvl(champion, champMastery)}
+                    {getMasteryLvl(champion, $champMastery)}
                 </span>
             </div>
         {/if}
