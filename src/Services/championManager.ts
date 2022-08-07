@@ -1,11 +1,13 @@
 import type {champion, championMastery} from "../Models/champion";
 
 export const searchChampion = (champions: champion[], targetChampionName: string): champion[] => {
+
     champions.forEach((champ: champion) => {
         champ.display = champ.name
             .toLowerCase()
             .startsWith(targetChampionName.toLowerCase());
     });
+    console.log(champions)
     return champions
 };
 

@@ -18,14 +18,16 @@
         urlParams.forEach((val, key) => {
             switch (key) {
                 case "name":
-                    searchUser(val).then(() => {
+                    username = val
+                    searchUser(val).then((data) => {
+                        $champMastery = data
                         $champions = [...$champions]
                     });
-                    username = val
                     break
                 case "champion":
-                    searchChampion($champions, val)
                     targetChampionName = val
+                    $champions = searchChampion($champions, targetChampionName)
+                    $champions = [...$champions]
                     break
             }
         })
