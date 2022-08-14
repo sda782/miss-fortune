@@ -1,5 +1,9 @@
 import type {AxiosResponse} from "axios";
 import type {champion} from "../Models/champion";
+import {searchUser} from "./userManager";
+import {champions, champMastery, targetChampionName, username} from "./Store";
+import {searchChampion} from "./championManager";
+import {get} from "svelte/store";
 
 let lastGroupLetter = ""
 export const showLetter = (name: string): boolean => {
@@ -24,4 +28,22 @@ export const arrangeChampion = (res: AxiosResponse): champion[] => {
     champions.forEach((c: champion) => c.display = true)
     champions.sort((a, b) => sortCompare(a, b))
     return champions
+}
+
+export const setUpParams = (): void => {
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.forEach((val, key) => {
+        switch (key) {
+            case "name":
+                searchUser(val).then((data) => {
+                    champMastery.set(data)
+                    username.set(val)
+                });
+                break
+            case "champion":
+                champions.set(searchChampion(get(champions), val))
+                targetChampionName.set(val)
+                break
+        }
+    })
 }
