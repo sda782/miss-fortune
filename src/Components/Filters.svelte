@@ -8,7 +8,7 @@
 
 </script>
 
-<div class="d-flex">
+<div class="d-flex flex-md-row flex-column">
     <InputField inputText="Summoner Name" buttonText="Find user" bind:inputValue={$username} action={async()=>{
         $champMastery = await searchUser($username)
         $champions = [...champions];
@@ -27,7 +27,4 @@
                 id="list"
                 bind:checked={displayList}/>
     </div>
-    <button class="btn btn-secondary-outline me-2"
-            style="max-height: 2em; color:rgb(215,207,190);">Reset
-    </button>
 </div>

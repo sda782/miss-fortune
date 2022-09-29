@@ -1,4 +1,5 @@
 import type {champion, championMastery} from "../Models/champion";
+import {setParams} from "./utils";
 
 export const searchChampion = (champions: champion[], targetChampionName: string): champion[] => {
 
@@ -7,7 +8,7 @@ export const searchChampion = (champions: champion[], targetChampionName: string
             .toLowerCase()
             .startsWith(targetChampionName.toLowerCase());
     });
-    console.log(champions)
+    setParams("champion", targetChampionName)
     return champions
 };
 

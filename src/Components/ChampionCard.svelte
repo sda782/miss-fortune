@@ -17,6 +17,8 @@
     <div style="max-width: 120px;" class="mt-3 ms-2 ">
         <img src="https://ddragon.leagueoflegends.com/cdn/{$ver}/img/champion/{champion.id}.png"
              alt={champion.name}
+             width="100"
+             height="100"
         />
         {#if $champMastery !== undefined}
             {#if hasChest(champion, $champMastery)}

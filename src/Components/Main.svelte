@@ -3,7 +3,7 @@
     import {getChampions, getLatestVersion} from "../Services/Api";
     import Filters from "./Filters.svelte";
     import ChampionCard from "./ChampionCard.svelte";
-    import {champions, targetChampionName, username, ver} from "../Services/Store";
+    import {champions, ver} from "../Services/Store";
     import {setUpParams} from "../Services/utils";
 
     let displayList = false;

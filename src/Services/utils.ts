@@ -5,6 +5,8 @@ import {champions, champMastery, targetChampionName, username} from "./Store";
 import {searchChampion} from "./championManager";
 import {get} from "svelte/store";
 
+const urlParams = new URLSearchParams(window.location.search);
+
 let lastGroupLetter = ""
 export const showLetter = (name: string): boolean => {
     if (lastGroupLetter.toLowerCase() !== name.toLowerCase()[0]) {
@@ -30,8 +32,12 @@ export const arrangeChampion = (res: AxiosResponse): champion[] => {
     return champions
 }
 
+export const setParams = (key: string, val: string): void => {
+    console.log(key + " " + val)
+    urlParams.set(key, val);
+}
+
 export const setUpParams = (): void => {
-    const urlParams = new URLSearchParams(window.location.search);
     urlParams.forEach((val, key) => {
         switch (key) {
             case "name":
