@@ -1,5 +1,5 @@
-import type {champion, championMastery} from "../Models/champion";
-import {setParams} from "./utils";
+import type { champion, championMastery } from "../Models/champion";
+import { setParams } from "./utils";
 
 export const searchChampion = (champions: champion[], targetChampionName: string): champion[] => {
 
@@ -22,6 +22,11 @@ export const getMasteryLvl = (champion: champion, championMastery: championMaste
     if (champ === undefined) return "";
     return champ.championLevel.toString();
 };
+
+export const getMasteryForChampion = (champion: champion, championMastery: championMastery[]): championMastery => {
+    let champMastery: championMastery = findChampionMasteryById(champion.key, championMastery)
+    return champMastery
+}
 
 const findChampionMasteryById = (championId: string, championMastery: championMastery[]): championMastery => {
     return championMastery.find(

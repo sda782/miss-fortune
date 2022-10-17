@@ -10,6 +10,7 @@ export interface champion {
         w: number,
         h: number
     },
+    blurb: string,
     display: boolean
 }
 

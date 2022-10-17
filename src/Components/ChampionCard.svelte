@@ -1,11 +1,20 @@
 <script lang="ts">
-    import type {champion} from "../Models/champion";
-    import {showLetter} from "../Services/utils";
-    import {getMasteryLvl, hasChest} from "../Services/championManager";
-    import {champMastery, ver} from "../Services/Store";
+    import type { champion } from "../Models/champion";
+    import { showLetter } from "../Services/utils";
+    import {
+        getMasteryForChampion,
+        getMasteryLvl,
+        hasChest,
+    } from "../Services/championManager";
+    import {
+        champMastery,
+        ver,
+        selectedChampion,
+        selectedChampionMastery,
+    } from "../Services/Store";
 
-    export let champion: champion
-    export let displayList: boolean
+    export let champion: champion;
+    export let displayList: boolean;
 </script>
 
 {#if champion.display}
@@ -14,16 +23,34 @@
             <span>{champion.name[0]}</span>
         </div>
     {/if}
-    <div style="max-width: 120px;" class="mt-3 ms-2 ">
-        <img src="https://ddragon.leagueoflegends.com/cdn/{$ver}/img/champion/{champion.id}.png"
-             alt={champion.name}
-             width="100"
-             height="100"
+    <div
+        style="max-width: 120px;"
+        class="mt-3 ms-2"
+        on:click={() => {
+            $selectedChampion = champion;
+            $selectedChampionMastery = getMasteryForChampion(
+                champion,
+                $champMastery
+            );
+            console.log($selectedChampion);
+        }}
+    >
+        <img
+            src="https://ddragon.leagueoflegends.com/cdn/{$ver}/img/champion/{champion.id}.png"
+            alt={champion.name}
+            width="120"
+            height="120"
         />
         {#if $champMastery !== undefined}
             {#if hasChest(champion, $champMastery)}
                 <div style="position:absolute;">
-                    <img width="43" height="45" class="overlay" src="/lock.png" alt=""/>
+                    <img
+                        width="32"
+                        height="32"
+                        class="overlay"
+                        src="/lock.png"
+                        alt=""
+                    />
                 </div>
             {/if}
             <div style="position:absolute;">
@@ -35,7 +62,6 @@
         <h5 class="text-center mt-2">{champion.name}</h5>
     </div>
 {/if}
-
 
 <style>
     .overlay {

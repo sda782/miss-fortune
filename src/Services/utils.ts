@@ -1,9 +1,9 @@
-import type {AxiosResponse} from "axios";
-import type {champion} from "../Models/champion";
-import {searchUser} from "./userManager";
-import {champions, champMastery, targetChampionName, username} from "./Store";
-import {searchChampion} from "./championManager";
-import {get} from "svelte/store";
+import type { AxiosResponse } from "axios";
+import type { champion } from "../Models/champion";
+import { searchUser } from "./userManager";
+import { champions, champMastery, targetChampionName, username } from "./Store";
+import { searchChampion } from "./championManager";
+import { get } from "svelte/store";
 
 const urlParams = new URLSearchParams(window.location.search);
 
@@ -52,4 +52,8 @@ export const setUpParams = (): void => {
                 break
         }
     })
+}
+
+export const getTimeStamp = (unix_timestamp: number): Date => {
+    return new Date(unix_timestamp)
 }
