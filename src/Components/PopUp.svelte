@@ -17,10 +17,12 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <div>
-                        <h3 class="modal-title" id="sampleModalLabel">
+                        <h2 class="modal-title" id="sampleModalLabel">
                             {$selectedChampion.name}
-                        </h3>
-                        <em>{$selectedChampion.title}</em>
+                        </h2>
+                        <h5>
+                            <em>{$selectedChampion.title}</em>
+                        </h5>
                     </div>
                     <img
                         src="https://ddragon.leagueoflegends.com/cdn/{$ver}/img/champion/{$selectedChampion.id}.png"
@@ -31,25 +33,12 @@
                 <div class="modal-body">
                     <p>{$selectedChampion.blurb}</p>
                 </div>
-                <!-- <div class="modal-body">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Stats</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {#each Object.entries($selectedChampion.stats) as stat}
-                                <tr>
-                                    <td>{stat[0]} {stat[1]}</td>
-                                </tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div> -->
-                <div class="modal-footer">
+                <div class="modal-body">
                     {#if $selectedChampionMastery !== undefined}
                         <div>
+                            <p>
+                                Mastery lvl: {$selectedChampionMastery.championLevel}
+                            </p>
                             <span>
                                 <i class="bi bi-clock" />
                                 {getTimeStamp(
@@ -58,6 +47,8 @@
                             </span>
                         </div>
                     {/if}
+                </div>
+                <div class="modal-footer">
                     <button
                         type="button"
                         class="btn btn-secondary-outline me-2"

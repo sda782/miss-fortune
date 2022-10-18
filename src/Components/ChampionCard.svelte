@@ -52,11 +52,11 @@
                         alt="" />
                 </div>
             {/if}
-            <div style="position:absolute;">
+            <!-- <div style="position:absolute;">
                 <span class="mastery-lvl fs-2">
                     {getMasteryLvl(champion, $champMastery)}
                 </span>
-            </div>
+            </div> -->
         {/if}
         <h5 class="text-center mt-2">{champion.name}</h5>
     </div>
@@ -69,9 +69,9 @@
         left: -5px;
     }
 
-    .mastery-lvl {
+    /* .mastery-lvl {
         position: relative;
         top: -35px;
         left: 95px;
-    }
+    } */
 </style>
