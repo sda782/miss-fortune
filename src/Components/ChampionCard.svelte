@@ -28,19 +28,19 @@
         class="mt-3 ms-2"
         on:click={() => {
             $selectedChampion = champion;
-            $selectedChampionMastery = getMasteryForChampion(
-                champion,
-                $champMastery
-            );
+            if ($champMastery !== undefined) {
+                $selectedChampionMastery = getMasteryForChampion(
+                    champion,
+                    $champMastery
+                );
+            }
             console.log($selectedChampion);
-        }}
-    >
+        }}>
         <img
             src="https://ddragon.leagueoflegends.com/cdn/{$ver}/img/champion/{champion.id}.png"
             alt={champion.name}
             width="120"
-            height="120"
-        />
+            height="120" />
         {#if $champMastery !== undefined}
             {#if hasChest(champion, $champMastery)}
                 <div style="position:absolute;">
@@ -49,8 +49,7 @@
                         height="32"
                         class="overlay"
                         src="/lock.png"
-                        alt=""
-                    />
+                        alt="" />
                 </div>
             {/if}
             <div style="position:absolute;">

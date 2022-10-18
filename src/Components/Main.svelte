@@ -6,6 +6,7 @@
     import { champions, ver } from "../Services/Store";
     import { setUpParams } from "../Services/utils";
     import PopUp from "./PopUp.svelte";
+    import type { champion } from "../Models/champion";
 
     let displayList = false;
 
@@ -13,6 +14,10 @@
         $ver = await getLatestVersion();
         $champions = await getChampions($ver);
         setUpParams();
+        /* $champions.forEach((champ: champion) => {
+            let str = `name: ${champ.name}, partype: ${champ.partype}`;
+            console.log(str);
+        }); */
     });
 </script>
 
