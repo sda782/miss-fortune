@@ -15,6 +15,17 @@
 
     export let champion: champion;
     export let displayList: boolean;
+
+    const selectChampion = (champion: champion) => {
+        $selectedChampion = champion;
+        if ($champMastery !== undefined) {
+            $selectedChampionMastery = getMasteryForChampion(
+                champion,
+                $champMastery
+            );
+        }
+        console.log($selectedChampion);
+    };
 </script>
 
 {#if champion.display}
@@ -24,17 +35,15 @@
         </div>
     {/if}
     <div
+        role="button"
         style="max-width: 120px;"
         class="mt-3 ms-2"
+        on:keypress={(e) => {
+            if (e.key !== "Enter") return;
+            selectChampion(champion);
+        }}
         on:click={() => {
-            $selectedChampion = champion;
-            if ($champMastery !== undefined) {
-                $selectedChampionMastery = getMasteryForChampion(
-                    champion,
-                    $champMastery
-                );
-            }
-            console.log($selectedChampion);
+            selectChampion(champion);
         }}>
         <img
             src="https://ddragon.leagueoflegends.com/cdn/{$ver}/img/champion/{champion.id}.png"
@@ -52,11 +61,11 @@
                         alt="" />
                 </div>
             {/if}
-            <!-- <div style="position:absolute;">
+            <div style="position:absolute;">
                 <span class="mastery-lvl fs-2">
                     {getMasteryLvl(champion, $champMastery)}
                 </span>
-            </div> -->
+            </div>
         {/if}
         <h5 class="text-center mt-2">{champion.name}</h5>
     </div>
@@ -69,9 +78,9 @@
         left: -5px;
     }
 
-    /* .mastery-lvl {
+    .mastery-lvl {
         position: relative;
         top: -35px;
         left: 95px;
-    } */
+    }
 </style>
