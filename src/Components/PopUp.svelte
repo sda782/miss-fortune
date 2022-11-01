@@ -5,6 +5,7 @@
         ver,
     } from "../Services/Store";
     import { getTimeStamp } from "../Services/utils";
+    import SplashArt from "./SplashArt.svelte";
 
     const modalClose = () => {
         $selectedChampion = undefined;
@@ -47,6 +48,9 @@
                             </span>
                         </div>
                     {/if}
+                </div>
+                <div class="modal-body">
+                    <SplashArt />
                 </div>
                 <div class="modal-footer">
                     <button

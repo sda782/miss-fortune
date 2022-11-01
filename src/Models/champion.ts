@@ -14,6 +14,7 @@ export interface champion {
     partype: string,
     title: string,
     stats: stats,
+    skins: skin[],
     display: boolean
 }
 
@@ -27,6 +28,13 @@ export interface championMastery {
     chestGranted: boolean,
     tokensEarned: number,
     summonerId: string
+}
+
+export interface skin {
+    id: number,
+    num: null
+    name: string,
+    chromas: boolean
 }
 
 interface stats {
