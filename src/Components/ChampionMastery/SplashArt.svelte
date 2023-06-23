@@ -1,7 +1,7 @@
 <script lang="ts">
-    import type { champion, skin } from "../Models/champion";
-    import { getChampion } from "../Services/Api";
-    import { selectedChampion, ver } from "../Services/Store";
+    import type { champion, skin } from "../../Models/champion";
+    import { getChampion } from "../../Services/Api";
+    import { selectedChampion, ver } from "../../Services/Store";
 
     let champion: champion | null = null;
     let skins: skin[] = [];

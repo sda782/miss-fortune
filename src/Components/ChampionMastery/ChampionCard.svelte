@@ -1,17 +1,17 @@
 <script lang="ts">
-    import type { champion } from "../Models/champion";
-    import { showLetter } from "../Services/utils";
+    import type { champion } from "../../Models/champion";
+    import { showLetter } from "../../Services/utils";
     import {
         getMasteryForChampion,
         getMasteryLvl,
         hasChest,
-    } from "../Services/championManager";
+    } from "../../Services/championManager";
     import {
         champMastery,
         ver,
         selectedChampion,
         selectedChampionMastery,
-    } from "../Services/Store";
+    } from "../../Services/Store";
 
     export let champion: champion;
     export let displayList: boolean;

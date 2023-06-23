@@ -1,13 +1,13 @@
 <script lang="ts">
-    import { searchUser } from "../Services/userManager";
-    import { searchChampion } from "../Services/championManager";
+    import { searchUser } from "../../Services/userManager";
+    import { searchChampion } from "../../Services/championManager";
     import InputField from "./InputField.svelte";
     import {
         champions,
         champMastery,
         targetChampionName,
         username,
-    } from "../Services/Store";
+    } from "../../Services/Store";
     import { onMount } from "svelte";
 
     export let displayList: boolean;

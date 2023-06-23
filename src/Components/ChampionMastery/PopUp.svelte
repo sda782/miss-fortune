@@ -3,8 +3,8 @@
         selectedChampion,
         selectedChampionMastery,
         ver,
-    } from "../Services/Store";
-    import { getTimeStamp } from "../Services/utils";
+    } from "../../Services/Store";
+    import { getTimeStamp } from "../../Services/utils";
     import SplashArt from "./SplashArt.svelte";
 
     const modalClose = () => {
