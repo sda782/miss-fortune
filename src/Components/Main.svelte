@@ -1,12 +1,10 @@
 <script lang="ts">
-    import Router from "svelte-spa-router";
+    import { Router, Route } from "svelte-routing";
     import ChampionMastery from "./ChampionMastery/ChampionMastery.svelte";
     import Challenges from "./Challenges/Challenges.svelte";
-    const routes = {
-        "/": ChampionMastery,
-        "/Challenges": Challenges,
-        "/Challenges/*": Challenges,
-    };
 </script>
 
-<Router {routes} />
+<Router>
+    <Route path="/" component={ChampionMastery} />
+    <Route path="/Challenges" component={Challenges} />
+</Router>

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import lock from "../../assets/lock.png";
     import type { champion } from "../../Models/champion";
     import { showLetter } from "../../Services/utils";
     import {
@@ -35,6 +36,7 @@
         </div>
     {/if}
     <div
+        tabindex={1}
         role="button"
         style="max-width: 120px;"
         class="mt-3 ms-2"
@@ -57,7 +59,7 @@
                         width="32"
                         height="32"
                         class="overlay"
-                        src="/lock.png"
+                        src={lock}
                         alt="" />
                 </div>
             {/if}
