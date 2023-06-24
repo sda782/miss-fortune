@@ -28,7 +28,7 @@ export const getMasteryForChampion = (champion: champion, championMastery: champ
     return champMastery
 }
 
-const findChampionMasteryById = (championId: string, championMastery: championMastery[]): championMastery => {
+export const findChampionMasteryById = (championId: string, championMastery: championMastery[]): championMastery => {
     return championMastery.find(
         (champ: championMastery) => champ.championId.toString() == championId
     )

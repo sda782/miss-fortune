@@ -1,7 +1,8 @@
-import axios, { AxiosResponse } from "axios"
+import axios, { type AxiosResponse } from "axios"
 import type { account } from "../Models/account"
 import type { champion, championMastery } from "../Models/champion"
 import { arrangeChampion } from "./utils";
+import type { ChallengesType } from "../Models/challenges";
 
 export const getLatestVersion = async (): Promise<string> => {
     const res: AxiosResponse = await axios.get('https://ddragon.leagueoflegends.com/api/versions.json')
@@ -29,5 +30,15 @@ export const getAccountIdsByName = async (username: string): Promise<account> =>
 
 export const getChampionsMastery = async (encryptedSummonerId: string): Promise<championMastery[]> => {
     const res: AxiosResponse = await axios.get(`https://riot-api-proxy.vercel.app/riotapi/champion-mastery/v4/champion-masteries/by-summoner/${encryptedSummonerId}`)
+    return res.data
+}
+
+export const getChallengesForUser = async (puuid: string): Promise<ChallengesType> => {
+    const res: AxiosResponse = await axios.get(`https://riot-api-proxy.vercel.app/riotapi/challenges/v1/player-data/${puuid}`)
+    return res.data
+}
+
+export const getChallengeConfig = async ()=>{
+    const res:AxiosResponse = await axios.get(`https://riot-api-proxy.vercel.app/riotapi/challenges/v1/challenges/config`)
     return res.data
 }

@@ -1,5 +1,9 @@
-import { Writable, writable } from "svelte/store";
+import { type Writable, writable } from "svelte/store";
 import type { champion, championMastery } from "../Models/champion";
+import { searchUser } from "./userManager";
+import type { account } from "../Models/account";
+import { getChallengesForUser, getChampionsMastery } from "./Api";
+import type { ChallengesType } from "../Models/challenges";
 
 export const champions = writable([])
 export const ver = writable("")
@@ -13,4 +17,12 @@ const stored = localStorage.getItem("defaultUsername")
 export const username = writable(stored || "")
 export const targetChampionName = writable("")
 
-username.subscribe((val) => localStorage.setItem("defaultUsername", val))
+export const challenges: Writable<ChallengesType | undefined> = writable(undefined)
+
+username.subscribe((uname: string) => {
+    localStorage.setItem("defaultUsername", uname)
+    searchUser(uname).then(async (res: account) => {
+        champMastery.set(await getChampionsMastery(res.id))
+        challenges.set(await getChallengesForUser(res.puuid))
+    })
+})

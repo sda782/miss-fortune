@@ -5,6 +5,8 @@
 </script>
 
 <Router>
-    <Route path="/" component={ChampionMastery} />
-    <Route path="/Challenges" component={Challenges} />
+    <div class="container mt-3">
+        <Route path="/" component={ChampionMastery} />
+        <Route path="/Challenges" component={Challenges} />
+    </div>
 </Router>
